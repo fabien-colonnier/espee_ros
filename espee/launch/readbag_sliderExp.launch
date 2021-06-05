@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<launch>
+
+ <arg name="NUM_TEST" default="1" />
+ <param name="NUM_TEST" value="$(arg NUM_TEST)" />
+ <arg name="DO_MAPPING" default="false" />
+ <param name="DO_MAPPING" value="$(arg DO_MAPPING)" />
+
+ <arg name="Result_record" default="false" />
+ <param name="Result_record" value="$(arg Result_record)" />
+
+ <arg name="BAGNAME" default="slider_depth.bag" />  <!--   testDemo_simu.bag-->
+ <param name="BAGNAME" value="$(arg BAGNAME)" />
+ <arg name="BAGRECORDED" default="slider_test$(arg NUM_TEST).bag" />  <!--   -->
+ <param name="BAGRECORDED" value="$(arg BAGRECORDED)" />
+
+ <arg name="FOLDER_BAG" default="/home/fabien/Documents/Localization_work/Dataset_rpg/" />  
+ <param name="FOLDER_BAG" value="$(arg FOLDER_BAG)" />
+
+ <arg name="GROUNDTRUTH" default="/optitrack/davis"/> 
+	
+ <arg name="config_file" default="$(find espee)/config/slider_depth_param.yaml" />
+<!-- localization node -->
+ <node pkg="espee" type="espee_esim_replay" name="espee_node" output="screen" >
+	<rosparam command="load" file="$(arg config_file)" />
+	<param name="groundtruth_topic" value="$(arg GROUNDTRUTH)" />
+	<param name="path2bag" value="$(arg FOLDER_BAG)$(arg BAGNAME)" />
+	<param name="RF_period" value="100" />
+	<param name="Depth_cam0" value="0.75" />
+
+	<param name="cam0" value="/dvs" />
+
+ </node>
+<!-- -->
+
+<param name="use_sim_time" value="true" /> 
+
+<group if="$(eval Result_record == true)">
+ <node pkg="rosbag" type="record" name="result_recorder" output="screen" args="-O $(arg BAGRECORDED) /localization/EKF_odom /localization/Features /localization/vicon/Dual_davis/Dual_davis /localization/events_Cam0 /localization/EKF_tracking_Cam0 /localization/Mapping_Cam0">
+ </node>
+</group>
+<!-- visualization node -->
+	<!-- conversion events into image to be viewed -->
+ <node name="dvs_renderer0" pkg="dvs_renderer" type="dvs_renderer">
+    <param name="display_method" value="red-blue"/>
+    <remap from="events" to="/localization/events_Cam0" />
+    <remap from="image" to="/Cam0/image_raw" />
+    <remap from="dvs_rendering" to="dvs_rendering_Cam0" />
+  </node>
+ 
+
+  <!-- display event data --> 
+  <node name="image_view0" pkg="image_view" type="image_view">
+    <remap from="image" to="dvs_rendering_Cam0"/>
+  </node>
+
+<!-- -->
+
+
+<!-- display LUT and Mapping LUT --> 
+<group if="$(eval DO_MAPPING == false)">
+  <node name="image_view_cam0_LUT" pkg="image_view" type="image_view">
+    <remap from="image" to="/localization/EKF_tracking_Cam0"/>
+  </node>
+
+</group>
+ 
+<group if="$(eval DO_MAPPING == true)">
+  <node name="image_view_cam0_mapping" pkg="image_view" type="image_view">
+    <remap from="image" to="/localization/Mapping_Cam0"/>
+  </node>
+
+</group>
+<!-- -->
+
+
+<!-- -->
+  <node name="Position" pkg="rqt_plot" type="rqt_plot"
+  	args="/localization/EKF_odom/pose/position/ $(arg GROUNDTRUTH)/pose/position/">
+  </node>
+
+  <node name="orientation" pkg="rqt_plot" type="rqt_plot"
+    	args="/localization/EKF_odom/pose/orientation/ $(arg GROUNDTRUTH)/pose/orientation/">
+  </node>
+
+  <!-- node name="cloud_viz" pkg="rviz" type="rviz"/-->
+<!-- -->
+
+
+</launch>

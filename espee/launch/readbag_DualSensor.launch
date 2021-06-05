@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<launch>
+
+ <arg name="DO_MAPPING" default="false" />
+ <param name="DO_MAPPING" value="$(arg DO_MAPPING)" />
+ <arg name="config_file" default="$(find espee)/config/ESPEE_Dual_sensor.yaml" />
+
+ <arg name="BAGNAME" default="DualSensor_exp.bag" />  
+ <param name="BAGNAME" value="$(arg BAGNAME)" />
+ <arg name="FOLDER_BAG" default="$(find espee)/../DualSensor_exp_data/" /> 
+ <param name="FOLDER_BAG" value="$(arg FOLDER_BAG)" />
+
+ <arg name="Result_record" default="true" />
+ <param name="Result_record" value="$(arg Result_record)" />
+ <arg name="BAGRECORDED" default="results_DualSensor.bag" />  
+ <param name="BAGRECORDED" value="$(arg BAGRECORDED)" />
+
+ <param name="use_sim_time" value="true" />     <!--test to have the Real time in the replay -->
+
+<!-- localization node -->
+ <node pkg="espee" type="espee_replay" name="espee_node" output="screen" >
+	<rosparam command="load" file="$(arg config_file)" />	
+	<param name="path2bag" value="$(arg FOLDER_BAG)$(arg BAGNAME)" />
+	<param name="RF_period" value="100" />
+	<param name="Depth_cam0" value="1.6" />   
+ 	<param name="Depth_cam1" value="1.2" />  
+	<param name="cam0" value="/davis_left" />
+        <param name="cam1" value="/davis_right" />
+ </node>
+
+
+<group if="$(eval Result_record == true)">
+ <node pkg="rosbag" type="record" name="result_recorder" output="screen" args="-O $(arg BAGRECORDED) /localization/EKF_odom /localization/Features /localization/vicon/Dual_davis/Dual_davis /localization/events_Cam0 /localization/events_Cam1 /localization/EKF_tracking_Cam0 /localization/EKF_tracking_Cam1 /localization/Mapping_Cam0 /localization/Mapping_Cam1 /clock --duration=66.5">
+ </node>
+</group>
+<!-- visualization node -->
+ <!-- conversion events into image to be viewed -->
+ <node name="dvs_renderer_0" pkg="dvs_renderer" type="dvs_renderer">
+    <param name="display_method" value="grayscale"/>
+    <remap from="events" to="/localization/events_Cam0" />
+    <remap from="image" to="/Cam0/image_raw" />
+    <remap from="dvs_rendering" to="dvs_rendering_Cam0" />
+  </node>
+
+  <node name="dvs_renderer_1" pkg="dvs_renderer" type="dvs_renderer">
+    <param name="display_method" value="grayscale"/>
+    <remap from="events" to="/localization/events_Cam1" />
+    <remap from="image" to="/Cam1/image_raw" />
+    <remap from="dvs_rendering" to="dvs_rendering_Cam1" />
+  </node> 
+
+  <!-- display event data --> 
+  <node name="image_view_0" pkg="image_view" type="image_view">
+    <remap from="image" to="dvs_rendering_Cam0"/>
+  </node>
+
+  <node name="image_view_1" pkg="image_view" type="image_view">
+    <remap from="image" to="dvs_rendering_Cam1"/>
+  </node> 
+<!-- -->
+
+
+<!-- display LUT and Mapping LUT --> 
+<group if="$(eval DO_MAPPING == false)">
+</group>
+  <node name="image_view_cam0_LUT" pkg="image_view" type="image_view">
+    <remap from="image" to="/localization/EKF_tracking_Cam0"/>
+  </node>
+
+  <node name="image_view_cam1_LUT" pkg="image_view" type="image_view">
+    <remap from="image" to="/localization/EKF_tracking_Cam1"/>
+  </node> 
+
+ 
+<group if="$(eval DO_MAPPING == true)">
+  <node name="image_view_cam0_mapping" pkg="image_view" type="image_view">
+    <remap from="image" to="/localization/Mapping_Cam0"/>
+  </node>
+
+  <node name="image_view_cam1_mapping" pkg="image_view" type="image_view">
+    <remap from="image" to="/localization/Mapping_Cam1"/>
+  </node>
+</group>
+<!-- -->
+
+<!-- -->
+  <node name="Position" pkg="rqt_plot" type="rqt_plot"
+  	args="/localization/EKF_odom/pose/position/ /vicon/Dual_davis/Dual_davis/transform/translation/">
+  </node>
+
+  <node name="orientation" pkg="rqt_plot" type="rqt_plot"
+    	args="/localization/EKF_odom/pose/orientation/ /vicon/Dual_davis/Dual_davis/transform/rotation/">
+  </node>
+
+  <!-- node name="cloud_viz" pkg="rviz" type="rviz"/-->
+<!-- -->
+
+
+</launch>

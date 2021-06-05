@@ -1,0 +1,2 @@
+#bash command to reset the localization with correct depth input
+rostopic pub --once /localization/input_depths localization_msgs/input_depth "{N_sensor: 2 , depths:[0.2, 0.3]}"

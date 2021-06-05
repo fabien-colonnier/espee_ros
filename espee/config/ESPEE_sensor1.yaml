@@ -1,0 +1,77 @@
+
+EKF_p:
+  Ptrans_init: 0.001
+  Prot_init: 0.1
+  QtransXY_init: 5.0e-9
+  QtransZ_init: 5.0e-9
+  QrotXY_init: 5.0e-5
+  QrotZ_init: 5.0e-5
+  R_coeff: 25.0
+
+ESPEE_rig_p:
+  NB_sensors: 1
+  absolute_xyz_qwqxqyqz: [2.4091, -0.622409, 1.203099, 0.523581, 0.485485, 0.492712, 0.497396]
+  relative_xyz_qwqxqyqz: 
+    sensor0: [0.0, -0.04, 0.0, 0.0, 0.0, -0.70710678118 , 0.70710678118]
+
+Init_map_p:
+  #0= init param with planar scene and accumulate events, 1= init with PCD file
+  Mode: 0
+  #(mode 0) average number of points per sensors to initialize
+  Num_points: 2000 
+  #(mode 1) path to point cloud
+  PCDfile_path: ""
+  #relative pose of the PCD
+  PCDrelative_xyz_qwqxqyqz: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+  
+
+ESPEE_FE_p:
+  #LUT search half window size
+  edge_range: 5
+  #LUT remap time
+  ReMapTimeThreshold: 400
+
+mapping_p:
+  ## Defines the depth sampling for DSI
+  #closest plane distance
+  D_MIN_MAPPING: 0.5
+  #furthest plane distance
+  D_MAX_MAPPING: 5.0
+  #closest distance between 2 planes (the 2 closest)
+  dz_min: 0.008 
+  #number of planes in the DSI
+  Nz: 200          
+
+  ##criteria for creating a new keyframe
+  #percentage of the mean depth for the DSI update
+  percent_Dmean_1: 0.3
+  #percentage of the mean depth for the DSI update
+  percent_Dmean_2: 0.4
+  #maximum of event for a new DSI to be created
+  MAX_EVENT_PER_DSI: 150000000
+
+  ##Parameters for thresholding confidence map (like EVO algorithm)
+  #size of the Gaussian kernel for the filtering of Cmap  //init_mapping should be adapted in case of modifications
+  Dim_Gauss_kernel: 5
+  #std deviation of the Gaussian filter 
+  Sigma_Gauss_kernel: 0.56 
+  #offset to threshold some data in the comparison 
+  Filt_offset: -6 
+
+  ##parameters for filtering Zmap
+  #size of the window for the median filter applied to the semi-dense depth map
+  MedianFilt_window_size: 15     
+
+  ##parameters for Point Cloud filtering (check in mapping.h if it is activated or not)
+  #number of neighbors in the area of a features to be taken into account
+  PCl_Radius_thres: 0.025
+  #number of nearest neighbors to take in account for the computation of the mean distance
+  PCl_nb_neighbors: 4
+
+
+  ##parameters for the feature list
+  #minimum of features for one DSI to update the feature list
+  MinFeatures_to_update: 600
+  #numbers of features max in feature list   
+  #NB_MAX_FEATURES 7500
+

@@ -1,0 +1,32 @@
+
+EKF_p:
+  Ptrans_init: 0.001
+  Prot_init: 0.1e1
+  QtransXY_init: 1.0e-8
+  QtransZ_init: 1.0e-8
+  QrotXY_init: 5.0e-5
+  QrotZ_init: 5.0e-5
+  R_coeff: 25.0
+
+ESPEE_rig_p:
+  NB_sensors: 1
+  absolute_xyz_qwqxqyqz: [0.111687, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+  relative_xyz_qwqxqyqz: 
+    sensor0: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+
+Init_map_p:
+  #0= init param with planar scene and accumulate events, 1= init with PCD file
+  Mode: 1
+  #(mode 0) average number of points per sensors to initialize
+  Num_points: 2000 
+  #(mode 1) path to point cloud
+  PCDfile_path: "/home/fabien/espee_ws/src/Espee_ros/slider_exp_data/pointcloud.pcd"
+  #relative pose of the PCD
+  PCDrelative_xyz_qwqxqyqz: [0.646103, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+
+ESPEE_FE_p:
+  #LUT search half window size
+  edge_range: 5
+  #LUT remap time
+  ReMapTimeThreshold: 200
+

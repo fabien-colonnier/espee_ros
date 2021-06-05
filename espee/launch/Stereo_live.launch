@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<launch>
+
+<arg name="vicon" default="false"/>
+<arg name="localization_RT" default="true"/>
+<arg name="USERNAME" default="fabien" />
+
+<arg name="config_file" default="$(find davis_ros_driver)/config/DAVIS240C_fab.yaml" />
+
+<!-- DAVIS drivers -->
+  <!-- master DAVIS -->
+  <node ns="davis_left" name="davis_ros_driver" pkg="davis_ros_driver" type="davis_ros_driver" output="screen">
+    <param name="serial_number" type="str" value="84010016" />
+    <rosparam command="load" file="$(arg config_file)" />
+    <param name="master" value="True"/>
+    <param name="camera_info_url" value="file:///home/$(arg USERNAME)/Dual_cam_ws/DAVIS_0016.yaml" />
+
+    <!-- timeout before resetting time -->
+    <param name="reset_timestamps_delay" value="2.0"/>
+  </node>
+
+  <!-- slave DAVIS -->
+  <node ns="davis_right" name="davis_ros_driver" pkg="davis_ros_driver" type="davis_ros_driver" output="screen">
+    <param name="serial_number" type="str" value="84010024" />
+    <rosparam command="load" file="$(arg config_file)" />
+    <param name="master" value="False"/>
+    <param name="camera_info_url" value="file:///home/$(arg USERNAME)/Dual_cam_ws/DAVIS_0024.yaml" />
+
+    <!-- get reset signal from master -->
+    <remap from="reset_timestamps" to="/davis_left/reset_timestamps"/>
+  </node>
+<!--end init DAVIS drivers -->
+
+<!-- visualization processing -->
+<!-- -->
+  <node name="dvs_renderer_left" pkg="dvs_renderer" type="dvs_renderer">
+    <param name="display_method" value="red-blue"/>
+    <remap from="events" to="/davis_left/events" />
+    <remap from="image" to="/davis_left/image_raw" />
+    <remap from="dvs_rendering" to="dvs_rendering_left" />
+  </node>
+
+  <node name="dvs_renderer_right" pkg="dvs_renderer" type="dvs_renderer">
+    <param name="display_method" value="red-blue"/>
+    <remap from="events" to="/davis_right/events" />
+    <remap from="image" to="/davis_right/image_raw" />
+    <remap from="dvs_rendering" to="dvs_rendering_right" />
+  </node>
+<!-- -->
+
+<!-- display  -->
+  <node name="image_view_left" pkg="image_view" type="image_view">
+    <remap from="image" to="dvs_rendering_left"/>
+  </node>
+
+  <node name="image_view_right" pkg="image_view" type="image_view">
+    <remap from="image" to="dvs_rendering_right"/>
+  </node>
+<!-- -->
+
+<!-- localization computation  -->
+<group if="$(eval localization_RT == true)">
+  	<!-- localization node -->
+	 <node pkg="localization" type="localization_node" name="localization_node" output="screen" >
+		<remap from="events_Cam0" to="/davis_left/events" />
+		<remap from="info_Cam0" to="/davis_left/camera_info" />
+		<remap from="events_Cam1" to="/davis_right/events" />
+		<remap from="info_Cam1" to="/davis_right/camera_info" />
+	 </node>
+	
+	<!-- display LUT and Mapping LUT  TODO put the DO_Mapping as parameter to allow the window creation accordingly--> 
+	  <node name="image_view_cam0_LUT" pkg="image_view" type="image_view">
+	    <remap from="image" to="/localization/EKF_tracking_Cam0"/>
+	  </node>
+
+	  <node name="image_view_cam1_LUT" pkg="image_view" type="image_view">
+	    <remap from="image" to="/localization/EKF_tracking_Cam1"/>
+	  </node> 
+	<!-- 
+	  <node name="image_view_cam0_mapping" pkg="image_view" type="image_view">
+	    <remap from="image" to="/localization/Mapping_Cam0"/>
+	  </node>
+
+	  <node name="image_view_cam1_mapping" pkg="image_view" type="image_view">
+	    <remap from="image" to="/localization/Mapping_Cam1"/>
+	  </node>
+	-->
+</group>
+<!-- -->
+
+<!-- connect vicon  -->
+<group if="$(eval vicon == true)">
+  <include file="$(find vicon_bridge)/launch/vicon.launch"> 
+  </include>
+</group>
+<!-- -->
+
+</launch>
