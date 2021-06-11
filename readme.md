@@ -39,5 +39,4 @@ Not published yet
 This code used the 2D separable convolution code written by Chris Sweeny in his project [akaze-eigen](https://github.com/sweeneychris/akaze-eigen) for the mapping algorithm.
 
 ## License
-The code and models in this repository are licensed under the GNU General Public License Version 3. For commercial use of this code and models, separate commercial licensing is also available. Please contact:
-* Fabien COLONNIER (fabien(dot)colonnier(at)gmail(dot)com)
+The code and models in this repository are licensed under the [Mozilla Public License Version 2.0](https://www.mozilla.org/en-US/MPL/2.0/). For commercial use of this code and models, separate commercial licensing is also available. Please contact me (Fabien COLONNIER email: fabien(dot)colonnier(at)gmail(dot)com) or NUS representative Jonathan Tan (email: jonathan_tan(at)nus(dot)edu(dot)sg)
