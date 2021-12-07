@@ -33,7 +33,8 @@ The YAML file contains the main parameters of the algorithm.
 
 
 ## Reference to the paper
-Not published yet
+Fabien Colonnier; Luca Della Vedova; Garrick Orchard. ESPEE: Event-Based Sensor Pose Estimation Using an Extended Kalman Filter. Sensors 2021, 21, 7840
+https://doi.org/10.3390/s21237840
 
 ## Reference to code used in this programme
 This code used the 2D separable convolution code written by Chris Sweeny in his project [akaze-eigen](https://github.com/sweeneychris/akaze-eigen) for the mapping algorithm.
