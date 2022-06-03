@@ -20,7 +20,7 @@ Init_map_p:
   #(mode 0) average number of points per sensors to initialize
   Num_points: 2000 
   #(mode 1) path to point cloud
-  PCDfile_path: "/home/fabien/espee_ws/src/Espee_ros/slider_exp_data/pointcloud.pcd"
+  PCDfile_path: "/home/fabien/catkin_ws/src/espee_ros/slider_exp_data/pointcloud.pcd"
   #relative pose of the PCD
   PCDrelative_xyz_qwqxqyqz: [0.646103, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
 

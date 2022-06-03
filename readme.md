@@ -13,7 +13,8 @@ Clone the repo into the src folder of your workspace and compile the code as usu
 ### Slider_depth
 The example comes from the [event-camera datasets](http://rpg.ifi.uzh.ch/davis_data.html) made by the RPG team and can be downloaded [here](http://rpg.ifi.uzh.ch/datasets/davis/slider_depth.bag).
 
-Modify the path to the bag in the launch file espee/launch/readbag_sliderExp.launch
+Modify the path to the bag in the launch file espee/launch/readbag_sliderExp.launch. The variable is named "FOLDER_BAG"
+Modify the PCDfile_path variable contained in the yaml file Slider_param.yaml located in "espee_ros/espee/config"
 
 Then you can run the example with:
 `$ roslaunch espee readbag_sliderExp.launch`

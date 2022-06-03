@@ -14,12 +14,12 @@
  <arg name="BAGRECORDED" default="slider_test$(arg NUM_TEST).bag" />  <!--   -->
  <param name="BAGRECORDED" value="$(arg BAGRECORDED)" />
 
- <arg name="FOLDER_BAG" default="/home/fabien/Documents/Localization_work/Dataset_rpg/" />  
+ <arg name="FOLDER_BAG" default="/home/fabien/Documents/RPG_dataset/" />  
  <param name="FOLDER_BAG" value="$(arg FOLDER_BAG)" />
 
  <arg name="GROUNDTRUTH" default="/optitrack/davis"/> 
 	
- <arg name="config_file" default="$(find espee)/config/slider_depth_param.yaml" />
+ <arg name="config_file" default="$(find espee)/config/Slider_param.yaml" />
 <!-- localization node -->
  <node pkg="espee" type="espee_esim_replay" name="espee_node" output="screen" >
 	<rosparam command="load" file="$(arg config_file)" />
